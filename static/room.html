@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>演练实况 · 参与者</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <div class="room-name" id="roomName">加载中…</div>
+        <div class="top-meta" style="margin-top:4px;">
+          房间码 <span class="room-code" id="roomCode">----</span>
+          <span class="badge pending" id="statusBadge">待开始</span>
+          <span style="margin-left:10px;"><span class="conn-dot" id="connDot"></span><span id="connText">连接中</span></span>
+        </div>
+      </div>
+      <div class="clock" id="clock">00:00:00</div>
+    </div>
+
+    <div id="banner"></div>
+
+    <section class="panel">
+      <h2 class="section-title">注入时间线</h2>
+      <div id="timeline"></div>
+    </section>
+  </div>
+
+  <script src="/common.js"></script>
+  <script src="/room.js"></script>
+</body>
+</html>

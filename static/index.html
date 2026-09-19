@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>事故演练 · 情景注入台</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>桌面事故演练 · 情景注入台</h1>
+      <p>主持人按相对秒数编排注入卡片，服务端虚拟时钟稳定揭示；参与者凭房间码实时收看。</p>
+    </div>
+
+    <div class="entry-grid">
+      <section class="panel">
+        <h2>🎛 主持人控制台</h2>
+        <p class="hint">创建一个新的演练房间。房间码和主持人令牌只展示一次，请妥善保存（令牌用于控制时钟与编排卡片）。</p>
+        <label for="roomName">演练名称（可选）</label>
+        <input type="text" id="roomName" maxlength="80" placeholder="例如：支付链路大面积超时演练" />
+        <button class="btn block" id="createBtn">创建演练房间</button>
+        <div class="error-box" id="createErr"></div>
+      </section>
+
+      <section class="panel">
+        <h2>👀 参与者进入</h2>
+        <p class="hint">输入主持人提供的 4 位房间码即可实时收看注入事件。断线重连会自动恢复并续传增量。</p>
+        <label for="roomCode">房间码</label>
+        <input type="text" id="roomCode" maxlength="6" placeholder="例如 A3F9"
+               style="text-transform:uppercase; letter-spacing:4px; font-family:monospace; font-size:18px;" />
+        <button class="btn block ok" id="joinBtn">进入房间</button>
+        <div class="error-box" id="joinErr"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="/common.js"></script>
+  <script>
+    const createErr = $("#createErr");
+    const joinErr = $("#joinErr");
+
+    $("#createBtn").addEventListener("click", async () => {
+      createErr.classList.remove("show");
+      const btn = $("#createBtn");
+      btn.disabled = true;
+      try {
+        const room = await api("/api/rooms", {
+          method: "POST",
+          body: JSON.stringify({ name: $("#roomName").value.trim() }),
+        });
+        // 仅主持人本机保存令牌
+        localStorage.setItem(`drill.host.${room.code}`, room.hostToken);
+        location.href = `/host.html?code=${room.code}`;
+      } catch (e) {
+        createErr.textContent = e.message;
+        createErr.classList.add("show");
+        btn.disabled = false;
+      }
+    });
+
+    $("#joinBtn").addEventListener("click", async () => {
+      joinErr.classList.remove("show");
+      const code = $("#roomCode").value.trim().toUpperCase();
+      if (!/^[0-9A-F]{4}$/.test(code)) {
+        joinErr.textContent = "房间码为 4 位十六进制字符（0-9 / A-F）";
+        joinErr.classList.add("show");
+        return;
+      }
+      try {
+        await api(`/api/rooms/${code}`);
+        location.href = `/room.html?code=${code}`;
+      } catch (e) {
+        joinErr.textContent = e.message;
+        joinErr.classList.add("show");
+      }
+    });
+
+    $("#roomCode").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") $("#joinBtn").click();
+    });
+  </script>
+</body>
+</html>

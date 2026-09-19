@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>主持人控制台 · 情景注入台</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <div class="room-name" id="roomName">加载中…</div>
+        <div class="top-meta" style="margin-top:4px;">
+          房间码 <span class="room-code" id="roomCode">----</span>
+          <span class="badge pending" id="statusBadge">待开始</span>
+          <span style="margin-left:10px;"><span class="conn-dot" id="connDot"></span><span id="connText">连接中</span></span>
+          <span style="margin-left:10px;">参与者 <strong id="participantCount">0</strong> 人</span>
+        </div>
+      </div>
+      <div class="clock" id="clock">00:00:00</div>
+    </div>
+
+    <div class="topbar" style="gap:10px;">
+      <div class="controls" style="flex:1;">
+        <button class="btn ok" id="btnStart">▶ 启动演练</button>
+        <button class="btn warn" id="btnPause">⏸ 暂停</button>
+        <button class="btn" id="btnResume">⏵ 继续</button>
+        <button class="btn secondary" id="btnFinish">■ 结束</button>
+        <button class="btn danger" id="btnReset">↺ 重置（新一轮）</button>
+      </div>
+      <button class="btn secondary small" id="btnCopyLink">复制参与者链接</button>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <h2 class="section-title">新建注入卡片</h2>
+        <label for="fTime">触发秒数（相对于演练开始，秒）</label>
+        <input type="number" id="fTime" min="0" step="0.5" value="10" />
+        <label for="fTitle">情景标题</label>
+        <input type="text" id="fTitle" maxlength="120" placeholder="例如：数据库主库 CPU 打满" />
+        <label for="fSeverity">严重程度</label>
+        <select id="fSeverity">
+          <option value="info">提示</option>
+          <option value="minor">一般</option>
+          <option value="major" selected>较大</option>
+          <option value="critical">重大</option>
+        </select>
+        <label for="fBody">情景描述 / 注入动作</label>
+        <textarea id="fBody" maxlength="4000" placeholder="向参与者展示的详细信息，可多行"></textarea>
+        <button class="btn block" id="btnAddCard">添加卡片</button>
+        <p class="hint" style="margin-top:12px; font-size:12px; color:var(--muted);">
+          演练进行中不能增删卡片，请先暂停。可随时用「立即揭示」手动注入。
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">卡片时间线（按触发秒数与序号揭示）</h2>
+        <div id="cardList"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="/common.js"></script>
+  <script src="/host.js"></script>
+</body>
+</html>
